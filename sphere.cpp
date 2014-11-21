@@ -15,27 +15,49 @@
  **********************************************************************/
 float intersect_sphere(Point o, Vector u, Spheres *sph, Point *hit) 
 {
-  /*Vector p;
-  p.x = o.x + u.x*t;
-  p.y = o.y + u.y*t;
-  p.z = o.z + u.z*t;*/
-
   float a = pow(u.x,2) + pow(u.y,2) + pow(u.z,2);
   float b = 2 * ( u.x * (o.x - sph->center.x) + u.y * (o.y - sph->center.y) + u.z * (o.z - sph->center.z) );
   float c = pow(o.x - sph->center.x , 2) + pow(o.y - sph->center.y , 2) + pow(o.z - sph->center.z , 2) - pow(sph->radius, 2);
 
   float t1 = (-b - sqrt(b*b - 4*a*c))/(2*a);
+  float t2 = (-b + sqrt(b*b - 4*a*c))/(2*a);
+  float t;
 
-  if (t1>=0)
-    return t1;
-
-  else {
-    float t2 = (-b + sqrt(b*b - 4*a*c))/(2*a);
-    if (t2>=0)
-      return t2;
-    else
-      return -1.0;
+  if (t1 < 0) {   // if t1 is negative
+    if (t2 < 0) 
+    {
+      t = -1.0;
+      return t;
+    }
+    else {
+      t = t2;
+      return t;
+    }
   }
+
+  else {     // if t1 is positive
+    if (t2 < 0) {   // t2 is negative
+      t = t1;
+      return t;
+    }
+    else {        // both positive
+      if (t1 >= t2) {
+        t = t1;
+        return t;
+      }
+      else {
+        t = t2;
+        return t;
+      }
+    }
+  }
+
+  Point p;
+  p.x = o.x + u.x*t;
+  p.y = o.y + u.y*t;
+  p.z = o.z + u.z*t;
+  *hit = p;
+
 }
 
 /*********************************************************************
@@ -44,12 +66,38 @@ float intersect_sphere(Point o, Vector u, Spheres *sph, Point *hit)
  * which arguments to use for the function. For exmaple, note that you
  * should return the point of intersection to the calling function.
  **********************************************************************/
-Spheres *intersect_scene() {
+Spheres *intersect_scene(Point o, Vector u, Spheres *slist, Point *hit) {
 //
 // do your thing here
 //
+  Spheres *sph;
 
-	return NULL;
+  if (slist == NULL) { // no spheres
+    return NULL;
+  } 
+  else  
+  {
+    if (sizeof(Spheres) <= 1)  // one sphere
+      return slist;
+    else 
+    {
+      float f1 = intersect_sphere(o, u, slist, hit);
+      sph = slist;
+      while (slist->next)    
+      {
+        float f2 = intersect_sphere(o, u, slist->next, hit);
+        if (f1 > f2)
+        {
+          f1 = f2;
+          sph = slist->next;
+        }
+      }
+
+      return sph;
+
+    }
+  }
+
 }
 
 /*****************************************************

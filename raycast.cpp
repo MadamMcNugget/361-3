@@ -88,6 +88,8 @@ const int NumPoints = 6;
 
 void init()
 {
+	glEnable(GL_LIGHTING);
+	glEnable(GL_LIGHT0);
 	// Vertices of a square
 	double ext = 1.0;
 	vec4 points[NumPoints] = {
