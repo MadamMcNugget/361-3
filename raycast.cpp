@@ -87,9 +87,7 @@ const int NumPoints = 6;
 //----------------------------------------------------------------------------
 
 void init()
-{
-	glEnable(GL_LIGHTING);
-	glEnable(GL_LIGHT0);
+{	
 	// Vertices of a square
 	double ext = 1.0;
 	vec4 points[NumPoints] = {
@@ -170,6 +168,20 @@ void display( void )
 	glClear( GL_COLOR_BUFFER_BIT );
 	glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 	glEnable(GL_CULL_FACE);
+
+	glEnable(GL_LIGHTING);
+	glEnable(GL_LIGHT0);
+
+	GLfloat light[3];
+	light[0] = 1.0;
+	light[1] = 1.0;
+	light[2] = 1.0;
+
+	glLightfv(GL_LIGHT0, GL_POSITION, light);
+	glLightfv(GL_LIGHT0, GL_DIFFUSE, light1_diffuse);
+	glLightfv(GL_LIGHT0, GL_SPECULAR, light1_specular);
+	glLightfv(GL_LIGHT0, GL_AMBIENT, light1_ambient);
+	glLightModelfv(GL_LIGHT_MODEL_AMBIENT, global_ambient);
 
 	glDrawArrays( GL_TRIANGLES, 0, NumPoints );
 

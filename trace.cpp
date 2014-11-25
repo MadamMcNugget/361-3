@@ -44,11 +44,40 @@ extern int step_max;
 /*********************************************************************
  * Phong illumination - you need to implement this!
  *********************************************************************/
-RGB_float phong(Point q, Vector v, Vector surf_norm, Spheres *sph) {
-//
-// do your thing here
-//
+RGB_float phong(Point q, Vector v, Vector surf_norm, Spheres *sph) 
+{
+  //
+  // do your thing here
+  //
+
+  GLfloat light[3];
+  light[0] = -2.0;
+  light[1] = 5.0;
+  light[2] = 1.0;
+
+  //float d = intersect_sphere(q, v, *sph, *hit) 
+  
+
+  glEnable(GL_LIGHTING);
+  glEnable(GL_LIGHT0);
+
+  glLightfv(GL_LIGHT0, GL_POSITION, light);
+  glLightfv(GL_LIGHT0, GL_DIFFUSE, light1_diffuse);
+  glLightfv(GL_LIGHT0, GL_SPECULAR, light1_specular);
+  glLightfv(GL_LIGHT0, GL_AMBIENT, light1_ambient);
+  glLightModelfv(GL_LIGHT_MODEL_AMBIENT, global_ambient);
+
+  glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT, sph->mat_ambient );
+  glMaterialfv(GL_FRONT_AND_BACK, GL_DIFFUSE, sph->mat_diffuse );
+  glMaterialfv(GL_FRONT_AND_BACK, GL_SPECULAR, sph->mat_specular );
+
 	RGB_float color;
+
+ /* color = light1_ambient*global_ambient + light1_ambient*mat_ambient + 
+        ( 1 / (decay_a + decay_b*d + decay_c*d*d)) * 
+        (light1_diffuse*mat_diffuse*vec_dot(surf_norm, v) + 
+         light1_specular*mat_specular*vec_dot());*/
+
 	return color;
 }
 
@@ -103,9 +132,9 @@ void ray_trace() {
       // ray.z = -1.0;
       // ret_color = recursive_ray_trace(cur_pixel_pos, ray, 1);
 
-// Checkboard for testing
-RGB_float clr = {float(i/32), 0, float(j/32)};
-ret_color = clr;
+      // Checkboard for testing
+      RGB_float clr = {float(i/32), 0, float(j/32)};
+      //ret_color = (0.0, 0.0, 0.0, 1.0);//clr;
 
       frame[i][j][0] = GLfloat(ret_color.r);
       frame[i][j][1] = GLfloat(ret_color.g);
