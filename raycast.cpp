@@ -169,12 +169,13 @@ void display( void )
 	glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 	glEnable(GL_CULL_FACE);
 
+
 	glEnable(GL_LIGHTING);
 	glEnable(GL_LIGHT0);
 
 	GLfloat light[3];
-	light[0] = 1.0;
-	light[1] = 1.0;
+	light[0] = -2.0;
+	light[1] = 5.0;
 	light[2] = 1.0;
 
 	glLightfv(GL_LIGHT0, GL_POSITION, light);
@@ -182,6 +183,10 @@ void display( void )
 	glLightfv(GL_LIGHT0, GL_SPECULAR, light1_specular);
 	glLightfv(GL_LIGHT0, GL_AMBIENT, light1_ambient);
 	glLightModelfv(GL_LIGHT_MODEL_AMBIENT, global_ambient);
+/*
+	glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT, mat_ambient );
+	glMaterialfv(GL_FRONT_AND_BACK, GL_DIFFUSE, mat_diffuse );
+	glMaterialfv(GL_FRONT_AND_BACK, GL_SPECULAR, mat_specular );*/
 
 	glDrawArrays( GL_TRIANGLES, 0, NumPoints );
 

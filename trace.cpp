@@ -39,6 +39,10 @@ extern float decay_c;
 extern int shadow_on;
 extern int step_max;
 
+//sphere params
+//extern float reflectance;
+extern Spheres *slist;
+
 /////////////////////////////////////////////////////////////////////
 
 /*********************************************************************
@@ -50,33 +54,27 @@ RGB_float phong(Point q, Vector v, Vector surf_norm, Spheres *sph)
   // do your thing here
   //
 
-  GLfloat light[3];
-  light[0] = -2.0;
-  light[1] = 5.0;
-  light[2] = 1.0;
+  Point p;
+  p.x = 0;
+  p.y = 0;
+  p.z = 0;
 
-  //float d = intersect_sphere(q, v, *sph, *hit) 
-  
+  float d = intersect(q, v, sph); 
+  Vector r = vec_minus(( vec_mult(surf_norm, 2*vec_dot(surf_norm, v)) ), v );
+  Vector vv = get_vec(eye_pos, q);
 
-  glEnable(GL_LIGHTING);
-  glEnable(GL_LIGHT0);
-
-  glLightfv(GL_LIGHT0, GL_POSITION, light);
-  glLightfv(GL_LIGHT0, GL_DIFFUSE, light1_diffuse);
-  glLightfv(GL_LIGHT0, GL_SPECULAR, light1_specular);
-  glLightfv(GL_LIGHT0, GL_AMBIENT, light1_ambient);
-  glLightModelfv(GL_LIGHT_MODEL_AMBIENT, global_ambient);
-
-  glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT, sph->mat_ambient );
-  glMaterialfv(GL_FRONT_AND_BACK, GL_DIFFUSE, sph->mat_diffuse );
-  glMaterialfv(GL_FRONT_AND_BACK, GL_SPECULAR, sph->mat_specular );
+  float col1;
 
 	RGB_float color;
 
- /* color = light1_ambient*global_ambient + light1_ambient*mat_ambient + 
+  col1 = sph->reflectance*global_ambient[0] + light1_ambient[0]*sph->mat_ambient[0] + 
         ( 1 / (decay_a + decay_b*d + decay_c*d*d)) * 
-        (light1_diffuse*mat_diffuse*vec_dot(surf_norm, v) + 
-         light1_specular*mat_specular*vec_dot());*/
+        (light1_diffuse[0]*sph->mat_diffuse[0]*vec_dot(surf_norm, v) + 
+         light1_specular[0]*sph->mat_specular[0]*pow(vec_dot(r, vv), sph->mat_shineness));
+
+  color.r = col1;
+  color.g = col1;
+  color.b = col1;
 
 	return color;
 }
@@ -110,6 +108,12 @@ void ray_trace() {
   RGB_float ret_color;
   Point cur_pixel_pos;
   Vector ray;
+  Spheres sph;
+
+  Point *p;
+  /*p.x = 0;
+  p.y = 0;
+  p.z = 0;*/
 
   // ray is cast through center of pixel
   cur_pixel_pos.x = x_start + 0.5 * x_grid_size;
@@ -119,12 +123,19 @@ void ray_trace() {
   for (i=0; i<win_height; i++) {
     for (j=0; j<win_width; j++) {
       ray = get_vec(eye_pos, cur_pixel_pos);
-
+      sph = intersect_scene(eye_pos, ray, slist, p, 1);
+      Vector norm = sphere_normal(eye_pos, sph);
       //
       // You need to change this!!!
       //
       // ret_color = recursive_ray_trace();
-      ret_color = background_clr; // just background for now
+
+      int inters = intersect(eye_pos, ray, sph); 
+
+      if (inters >= 0)
+        ret_color = phong(eye_pos, ray, norm, sph);
+      else 
+        ret_color = background_clr; // just background for now
 
       // Parallel rays can be cast instead using below
       //
@@ -133,8 +144,8 @@ void ray_trace() {
       // ret_color = recursive_ray_trace(cur_pixel_pos, ray, 1);
 
       // Checkboard for testing
-      RGB_float clr = {float(i/32), 0, float(j/32)};
-      //ret_color = (0.0, 0.0, 0.0, 1.0);//clr;
+      //RGB_float clr = {float(i/32), 0, float(j/32)};
+      //ret_color = clr;
 
       frame[i][j][0] = GLfloat(ret_color.r);
       frame[i][j][1] = GLfloat(ret_color.g);

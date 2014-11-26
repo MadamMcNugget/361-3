@@ -42,6 +42,15 @@ Vector vec_minus(Vector p, Vector q) {
   return rc;
 }
 
+Vector vec_mult(Vector p, float f) {
+  Vector rc;
+  rc.x = p.x * f;
+  rc.y = p.y * f;
+  rc.y = p.y * f;
+
+  return rc;
+}
+
 //
 // return vector from point point to another
 //

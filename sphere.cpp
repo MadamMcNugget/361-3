@@ -3,6 +3,48 @@
 #include <math.h>
 #include <iostream>
 
+
+float intersect(Point o, Vector u, Spheres *sph) 
+{
+  float a = pow(u.x,2) + pow(u.y,2) + pow(u.z,2);
+  float b = 2 * ( u.x * (o.x - sph->center.x) + u.y * (o.y - sph->center.y) + u.z * (o.z - sph->center.z) );
+  float c = pow(o.x - sph->center.x , 2) + pow(o.y - sph->center.y , 2) + pow(o.z - sph->center.z , 2) - pow(sph->radius, 2);
+
+  float t1 = (-b - sqrt(b*b - 4*a*c))/(2*a);
+  float t2 = (-b + sqrt(b*b - 4*a*c))/(2*a);
+  float t;
+
+  if (t1 < 0) {   // if t1 is negative
+    if (t2 < 0) 
+    {
+      t = -1.0;
+      return t;
+    }
+    else {
+      t = t2;
+      return t;
+    }
+  }
+
+  else {     // if t1 is positive
+    if (t2 < 0) {   // t2 is negative
+      t = t1;
+      return t;
+    }
+    else {        // both positive
+      if (t1 <= t2) {
+        t = t1;
+        return t;
+      }
+      else {
+        t = t2;
+        return t;
+      }
+    }
+  }
+}
+
+
 /**********************************************************************
  * This function intersects a ray with a given sphere 'sph'. You should
  * use the parametric representation of a line and do the intersection.
@@ -41,7 +83,7 @@ float intersect_sphere(Point o, Vector u, Spheres *sph, Point *hit)
       return t;
     }
     else {        // both positive
-      if (t1 >= t2) {
+      if (t1 <= t2) {
         t = t1;
         return t;
       }
