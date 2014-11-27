@@ -21,8 +21,7 @@ typedef struct sphere {
 } Spheres;   // a list of spheres
 
 // intersect ray with sphere
-float intersect(Point o, Vector u, Spheres *sph);
-float intersect_sphere(Point o, Vector u, Spheres *sph, Point *hit);
+float intersect_sphere(Point o, Vector u, Spheres *sph, Point *hit, int);
 Spheres *intersect_scene(Point, Vector, Spheres *, Point *, int);
 // return the unit normal at a point on sphere
 Vector sphere_normal(Point, Spheres *);

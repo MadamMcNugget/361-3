@@ -3,6 +3,9 @@
 #include <math.h>
 #include "global.h"
 #include "sphere.h"
+#include <iostream>
+
+using namespace std;
 
 //
 // Global variables
@@ -37,6 +40,7 @@ extern float decay_b;
 extern float decay_c;
 
 extern int shadow_on;
+extern int reflect_on;
 extern int step_max;
 
 //sphere params
@@ -48,37 +52,46 @@ extern Spheres *slist;
 /*********************************************************************
  * Phong illumination - you need to implement this!
  *********************************************************************/
-RGB_float phong(Point q, Vector v, Vector surf_norm, Spheres *sph) 
+RGB_float phong(Point q, Vector v, Vector surf_norm, Spheres *sph) // q = eyepos, v = ray
 {
   //
   // do your thing here
   //
-/*
-  Point p;
-  p.x = 0;
-  p.y = 0;
-  p.z = 0;
+  RGB_float color/* = {0.5,0.1,0.1}*/;
 
-  float d = vec_minus(q, light1); 
-  Vector r = vec_minus( ( vec_mult(surf_norm, 2*vec_dot(surf_norm, v)) ), v );
-  Vector vv = get_vec(eye_pos, q);
+  Vector lights = get_vec(q, light1);
 
-  float col1;*/
 
-	RGB_float color = {1,1,1 };
-/*
-  col1 = sph->reflectance*global_ambient[0] + light1_ambient[0]*sph->mat_ambient[0] + 
+  //Vector lights
+
+  float d = vec_len(lights);
+  normalize(&lights);
+ 
+  Vector r = vec_plus(vec_scale(surf_norm, -2*max(0.0f,vec_dot(lights, surf_norm))), lights);
+  Vector vv = get_vec(q, eye_pos);
+  normalize(&r);
+  normalize(&vv);
+  normalize(&v);
+
+  float col[3];
+
+  for(int i = 0; i<3; i++){
+    col[i] = sph->reflectance*global_ambient[i] + light1_ambient[i]*sph->mat_ambient[i] +
         ( 1 / (decay_a + decay_b*d + decay_c*d*d)) * 
-        (light1_diffuse[0]*sph->mat_diffuse[0]*vec_dot(surf_norm, v) + 
-         light1_specular[0]*sph->mat_specular[0]*pow(vec_dot(r, vv), sph->mat_shineness));
+        (light1_diffuse[i]*sph->mat_diffuse[i]*max(0.0f,vec_dot(surf_norm, lights)) +
+        light1_specular[i]*sph->mat_specular[i]*pow(vec_dot(r, vv), sph->mat_shineness));
+      }
+  Point m;
+  if(shadow_on && intersect_scene(q, lights, scene, &m, 1)){
+      for(int i = 0; i<3; i++)
+        col[i] = sph->reflectance*global_ambient[i] + light1_ambient[i]*sph->mat_ambient[i];
+  }
+  color.r = col[0];
+  color.g = col[1];
+  color.b = col[2];
 
-  color.r = col1;
-  color.g = col1;
-  color.b = col1;*/
-
-	return color;
+    return color;
 }
-
 /************************************************************************
  * This is the recursive ray tracer - you need to implement this!
  * You should decide what arguments to use.
@@ -95,8 +108,16 @@ RGB_float recursive_ray_trace(Point p, Vector v, int step) {
 
   if (sph==NULL)
     color = background_clr;
-  else
-    color = {1,1,1};
+  else{
+      // phong !!!!!!
+    color = phong(hit, v, sphere_normal(hit, sph), sph);
+    if(reflect_on && step<step_max){
+      cout<<"test"<<endl;
+      Vector surf_norm = sphere_normal(hit, sph);
+      Vector r = vec_plus(vec_scale(surf_norm, -2*vec_dot(v, surf_norm)), v);
+      color = clr_add(color, clr_scale(recursive_ray_trace(hit, r, step+1), sph->reflectance));
+    }
+  }
 	return color;
 }
 
@@ -150,7 +171,7 @@ void ray_trace() {
       //
       // ray.x = ray.y = 0;
       // ray.z = -1.0;
-      ret_color = recursive_ray_trace(cur_pixel_pos, ray, 1);
+      ret_color = recursive_ray_trace(cur_pixel_pos, ray, 1);// last 1 need to be down dynamically later
 
       // Checkboard for testing
       //RGB_float clr = {float(i/32), 0, float(j/32)};

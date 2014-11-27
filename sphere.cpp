@@ -5,47 +5,6 @@
 using namespace std;
 
 
-float intersect(Point o, Vector u, Spheres *sph) 
-{
-  float a = pow(u.x,2) + pow(u.y,2) + pow(u.z,2);
-  float b = 2 * ( u.x * (o.x - sph->center.x) + u.y * (o.y - sph->center.y) + u.z * (o.z - sph->center.z) );
-  float c = pow(o.x - sph->center.x , 2) + pow(o.y - sph->center.y , 2) + pow(o.z - sph->center.z , 2) - pow(sph->radius, 2);
-
-  float t1 = (-b - sqrt(b*b - 4*a*c))/(2*a);
-  float t2 = (-b + sqrt(b*b - 4*a*c))/(2*a);
-  float t;
-
-  if (t1 < 0) {   // if t1 is negative
-    if (t2 < 0) 
-    {
-      t = -1.0;
-      return t;
-    }
-    else {
-      t = t2;
-      return t;
-    }
-  }
-
-  else {     // if t1 is positive
-    if (t2 < 0) {   // t2 is negative
-      t = t1;
-      return t;
-    }
-    else {        // both positive
-      if (t1 <= t2) {
-        t = t1;
-        return t;
-      }
-      else {
-        t = t2;
-        return t;
-      }
-    }
-  }
-}
-
-
 /**********************************************************************
  * This function intersects a ray with a given sphere 'sph'. You should
  * use the parametric representation of a line and do the intersection.
@@ -56,7 +15,7 @@ float intersect(Point o, Vector u, Spheres *sph)
  * If there is an intersection, the point of intersection should be
  * stored in the "hit" variable
  **********************************************************************/
-float intersect_sphere(Point o, Vector u, Spheres *sph, Point *hit) 
+float intersect_sphere(Point o, Vector u, Spheres *sph, Point *hit, int type) 
 {
   float a = pow(u.x,2) + pow(u.y,2) + pow(u.z,2);
   float b = 2 * ( u.x * (o.x - sph->center.x) + u.y * (o.y - sph->center.y) + u.z * (o.z - sph->center.z) );
@@ -66,43 +25,32 @@ float intersect_sphere(Point o, Vector u, Spheres *sph, Point *hit)
   if (d <0)
     return -1.0;
   else {
-
-
-    float t1 = (-b - sqrt(b*b - 4*a*c))/(2*a);
-    float t2 = (-b + sqrt(b*b - 4*a*c))/(2*a);
-    float t;
-
-    if (t1 >= 0) {   // if t1 is positive
-        t = t1;
-        return t;
+      float t1 = (-b - sqrt(b*b - 4*a*c))/(2*a);
+      float t2 = (-b + sqrt(b*b - 4*a*c))/(2*a);
+      if(type == 1){
+        if(t1 > 0.001 || t2 > 0.001)
+            return 1;
+        return 0;
+      }
+      if (t1 >= 0) {   // if t1 is positive
+          Point p;
+          p.x = o.x + u.x*t1;
+          p.y = o.y + u.y*t1;
+          p.z = o.z + u.z*t1;
+          hit->x=p.x;
+          hit->y=p.y;
+          hit->z=p.z;
+      
+        return t1;
     }
 
-    else {     // if t1 is positive
-      /*if (t2 < 0) {   // t2 is negative
-        t = t1;
-      }
-      else {        // both positive
-        if (t1 <= t2) {
-          t = t1;
-        }
-        else {
-          t = t2;
-        }
-      }*/
+    else { 
         return -1.0;
     }
 
-        
-  Point p;
-  p.x = o.x + u.x*t;
-  p.y = o.y + u.y*t;
-  p.z = o.z + u.z*t;
-  hit->x=p.x;
-  hit->y=p.y;
-  hit->z=p.z;
- 
-}
-}
+}}
+
+// Also need intersect floor here!!!!!!!!!
 
 /*********************************************************************
  * This function returns a pointer to the sphere object that the
@@ -115,16 +63,43 @@ Spheres *intersect_scene(Point o, Vector u, Spheres *slist, Point *hit, int i)
 //
 // do your thing here
 //
+// Does not return the closest point of contact!!!!!!!!!!! fix later  
 
     Spheres *sph=NULL;
-    Spheres *cur=NULL;
+    Spheres *cur=slist;
+    Point curHit;
 
-    float t=100;
 
   if (slist == NULL) { // no spheres
     return NULL;
   } 
+   if(i == 1){
+    while(cur){
+      if(intersect_sphere(o, u, cur, &curHit, i) == 1){
+        return cur;
+      }
+      cur = cur->next;
+    }
+    return NULL;
+  }
+float t = 100000;
 
+  
+  while (cur!= NULL){
+    float temp = intersect_sphere(o,u,cur,&curHit, i);
+    if (temp != -1) {
+      if(temp<t){
+          sph = cur;
+          t = temp;
+          hit->x = curHit.x;
+          hit->y = curHit.y;
+          hit->z = curHit.z;
+      }
+    }
+    cur = cur->next;
+  }
+  return sph;
+/*
   while (cur!=NULL) {
     float temp = intersect_sphere(o, u, slist, hit);
     if (temp >= 0) {
@@ -135,7 +110,14 @@ Spheres *intersect_scene(Point o, Vector u, Spheres *slist, Point *hit, int i)
     }
     cur = cur->next;
   }
-  return sph;
+  return sph;*/
+
+
+
+
+
+
+
   /*else if ( sizeof(slist) == 1) {
     //Spheres sph = slist;
 
