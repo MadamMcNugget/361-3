@@ -53,20 +53,20 @@ RGB_float phong(Point q, Vector v, Vector surf_norm, Spheres *sph)
   //
   // do your thing here
   //
-
+/*
   Point p;
   p.x = 0;
   p.y = 0;
   p.z = 0;
 
-  float d = intersect(q, v, sph); 
-  Vector r = vec_minus(( vec_mult(surf_norm, 2*vec_dot(surf_norm, v)) ), v );
+  float d = vec_minus(q, light1); 
+  Vector r = vec_minus( ( vec_mult(surf_norm, 2*vec_dot(surf_norm, v)) ), v );
   Vector vv = get_vec(eye_pos, q);
 
-  float col1;
+  float col1;*/
 
-	RGB_float color;
-
+	RGB_float color = {1,1,1 };
+/*
   col1 = sph->reflectance*global_ambient[0] + light1_ambient[0]*sph->mat_ambient[0] + 
         ( 1 / (decay_a + decay_b*d + decay_c*d*d)) * 
         (light1_diffuse[0]*sph->mat_diffuse[0]*vec_dot(surf_norm, v) + 
@@ -74,7 +74,7 @@ RGB_float phong(Point q, Vector v, Vector surf_norm, Spheres *sph)
 
   color.r = col1;
   color.g = col1;
-  color.b = col1;
+  color.b = col1;*/
 
 	return color;
 }
@@ -83,11 +83,20 @@ RGB_float phong(Point q, Vector v, Vector surf_norm, Spheres *sph)
  * This is the recursive ray tracer - you need to implement this!
  * You should decide what arguments to use.
  ************************************************************************/
-RGB_float recursive_ray_trace() {
+RGB_float recursive_ray_trace(Point p, Vector v, int step) {
 //
 // do your thing here
 //
-	RGB_float color;
+  RGB_float color;
+
+  Point hit;
+  Spheres *sph;
+  sph = intersect_scene(p, v, scene, &hit, 0);
+
+  if (sph==NULL)
+    color = background_clr;
+  else
+    color = {1,1,1};
 	return color;
 }
 
@@ -108,9 +117,9 @@ void ray_trace() {
   RGB_float ret_color;
   Point cur_pixel_pos;
   Vector ray;
-  Spheres sph;
+  //Spheres sph;
 
-  Point *p;
+  //Point *p;
   /*p.x = 0;
   p.y = 0;
   p.z = 0;*/
@@ -123,25 +132,25 @@ void ray_trace() {
   for (i=0; i<win_height; i++) {
     for (j=0; j<win_width; j++) {
       ray = get_vec(eye_pos, cur_pixel_pos);
-      sph = intersect_scene(eye_pos, ray, slist, p, 1);
-      Vector norm = sphere_normal(eye_pos, sph);
+      //sph = intersect_scene(eye_pos, ray, slist, &p, 0);
+      //Vector norm = sphere_normal(eye_pos, sph);
       //
       // You need to change this!!!
       //
       // ret_color = recursive_ray_trace();
 
-      int inters = intersect(eye_pos, ray, sph); 
+      //int inters = intersect(eye_pos, ray, sph); 
 
-      if (inters >= 0)
+      /*if (inters >= 0)
         ret_color = phong(eye_pos, ray, norm, sph);
-      else 
-        ret_color = background_clr; // just background for now
+      else */
+      //ret_color = background_clr; // just background for now
 
       // Parallel rays can be cast instead using below
       //
       // ray.x = ray.y = 0;
       // ray.z = -1.0;
-      // ret_color = recursive_ray_trace(cur_pixel_pos, ray, 1);
+      ret_color = recursive_ray_trace(cur_pixel_pos, ray, 1);
 
       // Checkboard for testing
       //RGB_float clr = {float(i/32), 0, float(j/32)};

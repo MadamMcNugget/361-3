@@ -169,6 +169,7 @@ void display( void )
 	glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 	glEnable(GL_CULL_FACE);
 
+	glutPostRedisplay();
 
 	glEnable(GL_LIGHTING);
 	glEnable(GL_LIGHT0);

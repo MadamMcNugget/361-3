@@ -2,7 +2,6 @@
 #include <stdlib.h>
 #include <math.h>
 #include <iostream>
-using namespace std;
 
 
 float intersect(Point o, Vector u, Spheres *sph) 
@@ -115,80 +114,63 @@ Spheres *intersect_scene(Point o, Vector u, Spheres *slist, Point *hit, int i)
 //
 // do your thing here
 //
-
-    Spheres *sph=NULL;
-    Spheres *cur=NULL;
-
-    float t=100;
+  /*Spheres *sph;
 
   if (slist == NULL) { // no spheres
     return NULL;
   } 
+  else  
+  {
+    if (sizeof(slist) == 1)  // one sphere
+      return slist;
+    else 
+    {
+      float f1 = intersect_sphere(o, u, slist, hit);
 
-  while (cur!=NULL) {
-    float temp = intersect_sphere(o, u, slist, hit);
-    if (temp >= 0) {
-      if (temp < t) {
-        t = temp;
-        sph = cur;
+      sph = slist;
+
+      while (slist->next!=NULL)    
+      {
+        float f2 = intersect_sphere(o, u, slist->next, hit);
+        if (f2 >= 0 && f1 > f2)
+        {
+          f1 = f2;
+          sph = slist->next;
+        }
+        slist = slist->next;
       }
+
+      return sph;
+
     }
-    cur = cur->next;
-  }
-  return sph;
-  /*else if ( sizeof(slist) == 1) {
+  }*/
+
+    Spheres *sph;
+
+  if (slist == NULL) { // no spheres
+    return NULL;
+  } 
+  else/* if ( sizeof(slist) == 1)*/ {
     //Spheres sph = slist;
-
-
-
-
-
-
-
-
     int num_sphere = 3;
   
-    for (int i=0 ; i<num_sphere ; i++) {
+
       float f1 = intersect_sphere(o, u, slist, hit);
-      if (f1 < 0) {
-
+      if (f1 < 0)
         return NULL;
-      }
-      else 
-      {
+      else {
+        sph = slist;
+        sph->next = NULL;
+        sph = sph->next;
 
-        if (sph == NULL) {
-
-          sph = slist;
-          sph->next = NULL;
-          slist = slist->next;
-        }
-        else {
-          sph->next = slist;
-          slist = slist->next;
-          sph = sph->next;
-          sph->next = NULL;
-                    cout<<"test1"<<endl;
-        }
-      }
-    }
-  }
-return sph;*/
-/*
-if (slist == NULL) { // first object
-    slist = new_sphere;
-  } else { // insert at the beginning
-    new_sphere->next = slist;
-    slist = new_sphere;
-  }*/
          /*float f3 = intersect_sphere(o, u, slist->next->next, hit);
       if (f3 < 0)
         return NULL;
       else {
         return slist;*/
 
-    
-  /*
+    }
+  }/*
   else {
     Spheres sph;
     float f1 = intersect_sphere(o, u, slist, hit);
