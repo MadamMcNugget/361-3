@@ -63,7 +63,6 @@ Spheres *intersect_scene(Point o, Vector u, Spheres *slist, Point *hit, int i)
 //
 // do your thing here
 //
-// Does not return the closest point of contact!!!!!!!!!!! fix later  
 
     Spheres *sph=NULL;
     Spheres *cur=slist;
@@ -99,105 +98,6 @@ float t = 100000;
     cur = cur->next;
   }
   return sph;
-/*
-  while (cur!=NULL) {
-    float temp = intersect_sphere(o, u, slist, hit);
-    if (temp >= 0) {
-      if (temp < t) {
-        t = temp;
-        sph = cur;
-      }
-    }
-    cur = cur->next;
-  }
-  return sph;*/
-
-
-
-
-
-
-
-  /*else if ( sizeof(slist) == 1) {
-    //Spheres sph = slist;
-
-
-
-
-
-
-
-
-    int num_sphere = 3;
-  
-    for (int i=0 ; i<num_sphere ; i++) {
-      float f1 = intersect_sphere(o, u, slist, hit);
-      if (f1 < 0) {
-
-        return NULL;
-      }
-      else 
-      {
-
-        if (sph == NULL) {
-
-          sph = slist;
-          sph->next = NULL;
-          slist = slist->next;
-        }
-        else {
-          sph->next = slist;
-          slist = slist->next;
-          sph = sph->next;
-          sph->next = NULL;
-                    cout<<"test1"<<endl;
-        }
-      }
-    }
-  }
-return sph;*/
-/*
-if (slist == NULL) { // first object
-    slist = new_sphere;
-  } else { // insert at the beginning
-    new_sphere->next = slist;
-    slist = new_sphere;
-  }*/
-         /*float f3 = intersect_sphere(o, u, slist->next->next, hit);
-      if (f3 < 0)
-        return NULL;
-      else {
-        return slist;*/
-
-    
-  /*
-  else {
-    Spheres sph;
-    float f1 = intersect_sphere(o, u, slist, hit);
-    if (f1 >= 0)
-      sph = slist;
-
-    while
-
-  }*/
-
-
-  /*
-  else if (sizeof slist == 1) 
-  {
-    float f1 = intersect_sphere(o, u, slist, hit);
-    if (f1 < 0)
-  }
-  else {
-    {
-    float f1 = intersect_sphere(o, u, slist, hit);
-    if (f1 < 0)
-      return NULL;
-    else
-      return slist;
-    }
-
-  }*/
 
 }
 

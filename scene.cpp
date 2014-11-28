@@ -85,14 +85,15 @@ void set_up_default_scene() {
  * You can create your own scene here
  ***************************************/
 void set_up_user_scene() {
-    Point sphere2_ctr = {-1.5, 0.0, -3.5};
-  float sphere2_rad = 1.5;
+    Point sphere2_ctr = {0, 0, 0};
+  float sphere2_rad = 0.5;
   float sphere2_ambient[] = {0.6, 0.6, 0.6};
   float sphere2_diffuse[] = {1.0, 0.0, 0.25};
   float sphere2_specular[] = {1.0, 1.0, 1.0};
-  float sphere2_shineness = 6;
-  float sphere2_reflectance = 0.3;
+  float sphere2_shineness = 2;
+  float sphere2_reflectance = 2;
   scene = add_sphere(scene, sphere2_ctr, sphere2_rad, sphere2_ambient,
              sphere2_diffuse, sphere2_specular, sphere2_shineness,
          sphere2_reflectance, 2);
 }
+

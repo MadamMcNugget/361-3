@@ -250,6 +250,7 @@ int main( int argc, char **argv )
 	{
 		if (strcmp(argv[i], "-s") == 0)	shadow_on = 1;
 		if (strcmp(argv[i], "-l") == 0) reflect_on = 1;
+		//if (strcmp(argv[i], "-c") == 0) chessboard_on = 1;
 	}
 
 	//
@@ -258,7 +259,7 @@ int main( int argc, char **argv )
 	// we have used so many global variables and this function is
 	// happy to carry no parameters
 	//
-	printf("Rendering scene using my FANTASTIC ray tracer ...\n");
+	printf("Rendering scene using my SUPER SPECIAL AWESOME ray tracer ...\n");
 	ray_trace();
 
 	// we want to make sure that intensity values are normalized

@@ -112,12 +112,13 @@ RGB_float recursive_ray_trace(Point p, Vector v, int step) {
       // phong !!!!!!
     color = phong(hit, v, sphere_normal(hit, sph), sph);
     if(reflect_on && step<step_max){
-      cout<<"test"<<endl;
+ 
       Vector surf_norm = sphere_normal(hit, sph);
       Vector r = vec_plus(vec_scale(surf_norm, -2*vec_dot(v, surf_norm)), v);
       color = clr_add(color, clr_scale(recursive_ray_trace(hit, r, step+1), sph->reflectance));
     }
   }
+
 	return color;
 }
 
